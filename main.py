@@ -19,3 +19,17 @@ def read_item(item_id: int, q: Optional[str] = None):
 @app.get("/merhaba/{sayi}")
 def merhaba(sayi: int) -> List[str]: 
     return [f"merhaba {i}" for i in range(1, sayi + 1)]
+
+@app.post("/upload-csv/") 
+async def upload_csv(file: UploadFile = File(...)):
+    # Dosya içeriğini oku
+    content = await file.read()
+    # Bytes -> string
+    decoded = content.decode("utf-8")
+    # String -> satır listesi 
+    reader = csv.reader(io.StringIO(decoded)) 
+
+    # CSV içeriğini listeye dönüştür 
+    rows = [row for row in reader]
+    
+    return {"filename": file.filename, "rows": rows}
