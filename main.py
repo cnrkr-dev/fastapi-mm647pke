@@ -52,3 +52,8 @@ def get_items():
     }
     response = requests.get(url, headers=headers)
     return response.json()
+
+@app.get("/get-fundcategories/")
+def get_fundcategories():
+    response = supabase.table("fund_categories").select("*").execute()
+    return response.data
