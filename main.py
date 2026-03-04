@@ -4,8 +4,15 @@ from fastapi import FastAPI, UploadFile, File
 from typing import List
 import csv 
 import io
+import requests
+from dotenv import load_dotenv
+import os
 
 app = FastAPI()
+
+load_dotenv()
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 
 @app.get("/")
@@ -33,3 +40,14 @@ async def upload_csv(file: UploadFile = File(...)):
     rows = [row for row in reader]
     
     return {"filename": file.filename, "rows": rows}
+
+@app.get("/get-items/")
+def get_items():
+    url = f"{SUPABASE_URL}/rest/v1/fund_types"  # 'mytable' yerine tablo adını yaz
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json"
+    }
+    response = requests.get(url, headers=headers)
+    return response.json()
